@@ -1,35 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { FinanceProvider } from './context/FinanceContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+// Import our components and pages
+import Layout from './components/Layout/Layout';
+import Dashboard from './pages/Dashboard/Dashboard';
+import Transactions from './pages/Transactions/Transactions';
+import AddTransaction from './pages/AddTransaction/AddTransaction';
+import Budget from './pages/Budget/Budget';
+import Analytics from './pages/Analytics/Analytics';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    // FinanceProvider gives all pages access to transactions and budget data
+    <FinanceProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Layout wraps all pages with the sidebar */}
+          <Route element={<Layout />}>
+            {/* Redirect home page to dashboard */}
+            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+            {/* Our 5 main pages */}
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/transactions/new" element={<AddTransaction />} />
+            <Route path="/budget" element={<Budget />} />
+            <Route path="/analytics" element={<Analytics />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+
+      {/* Toast notifications pop up at bottom-right */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnFocusLoss={false}
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </FinanceProvider>
+  );
 }
 
-export default App
+export default App;
